@@ -12,6 +12,7 @@ public class TabelDataBaseAkademik extends JFrame {
     private JTable table;
     private DefaultTableModel tableModel;
 
+    // Konstruktor untuk membuat GUI
     public TabelDataBaseAkademik() {
         setTitle("TABEL DATA BASE AKADEMIK");
         setSize(800, 600);
@@ -22,7 +23,7 @@ public class TabelDataBaseAkademik extends JFrame {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
-        // Membuat label
+        // Membuat label judul
         JLabel label = new JLabel("Tabel Data Base Akademik", SwingConstants.CENTER);
         label.setFont(new Font("Serif", Font.BOLD, 20));
         panel.add(label, BorderLayout.NORTH);
@@ -33,7 +34,7 @@ public class TabelDataBaseAkademik extends JFrame {
         JScrollPane scrollPane = new JScrollPane(table);
         panel.add(scrollPane, BorderLayout.CENTER);
 
-        // Membuat tombol
+        // Membuat tombol untuk menampilkan tabel
         JButton button = new JButton("TAMPILKAN TABEL");
         panel.add(button, BorderLayout.SOUTH);
 
@@ -41,41 +42,43 @@ public class TabelDataBaseAkademik extends JFrame {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                loadTableData();
+                loadTableData(); // Memuat data tabel saat tombol ditekan
             }
         });
 
         add(panel);
     }
 
+    // Method untuk memuat data tabel dari file
     private void loadTableData() {
         String filePath = "C:\\Users\\ASUS\\Downloads\\DB AKADEMIK\\Akademik.txt";
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             tableModel.setRowCount(0); // Mengosongkan data yang ada
             tableModel.setColumnCount(0); // Mengosongkan kolom yang ada
-            boolean isFirstRow = true;
-            boolean isSecondRow = false;
+            boolean isFirstRow = true; // Menandai apakah ini baris pertama (header)
+            boolean isSecondRow = false; // Menandai apakah ini baris kedua (garis pemisah)
 
+            // Membaca baris demi baris dari file
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("|")) {
-                    // Menghilangkan karakter '|' dan memotong whitespace di kedua ujung
+                    // Memecah baris menjadi data dengan delimiter '|'
                     String[] data = line.split("\\|");
                     for (int i = 0; i < data.length; i++) {
-                        data[i] = data[i].trim();
+                        data[i] = data[i].trim(); // Menghilangkan spasi di sekitar data
                     }
                     if (isFirstRow) {
-                        // Menambahkan kolom ke tabel, mengabaikan elemen kosong pertama dan terakhir
+                        // Menambahkan kolom ke tabel dari baris pertama
                         for (int i = 1; i < data.length - 1; i++) {
                             tableModel.addColumn(data[i]);
                         }
                         isFirstRow = false;
                         isSecondRow = true;
                     } else if (isSecondRow) {
-                        // Abaikan baris kedua yang berisi garis pemisah
+                        // Mengabaikan baris kedua yang berisi garis pemisah
                         isSecondRow = false;
                     } else {
-                        // Menambahkan baris ke tabel, mengabaikan elemen kosong pertama dan terakhir
+                        // Menambahkan baris data ke tabel
                         if (data.length > 1) {
                             Object[] rowData = new Object[data.length - 2];
                             System.arraycopy(data, 1, rowData, 0, data.length - 2);
@@ -85,10 +88,12 @@ public class TabelDataBaseAkademik extends JFrame {
                 }
             }
         } catch (IOException e) {
+            // Menampilkan pesan kesalahan jika terjadi error saat membaca file
             JOptionPane.showMessageDialog(this, "Error reading file: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
+    // Main method untuk menjalankan aplikasi GUI
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
